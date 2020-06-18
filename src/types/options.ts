@@ -46,6 +46,13 @@ export const HOOKS: HookKey[] = [
 
 export type Plugin<E = {}> = (fp: Instance & E) => Options;
 
+export interface FormattingOptions {
+  timeFormat: string;
+  timeWithSecondsFormat: string;
+  dateFormat: string;
+  dateTimeFormat: string;
+}
+
 export interface BaseOptions {
   /*
   Allows the user to enter a date directly input the input field. By default, direct entry is disabled.
@@ -253,6 +260,9 @@ Use it along with "enableTime" to create a time picker. */
 
   /* See https://chmln.github.io/flatpickr/examples/#flatpickr-external-elements */
   wrap: boolean;
+
+  /* These options can be used to change the formats used for date parsing when using a custom parseDate function. */
+  formattingOptions: FormattingOptions;
 }
 
 export type Options = Partial<BaseOptions>;
@@ -326,6 +336,7 @@ export interface ParsedOptions {
   time_24hr: boolean;
   weekNumbers: boolean;
   wrap: boolean;
+  formattingOptions: FormattingOptions;
 }
 
 export const defaults: ParsedOptions = {
@@ -410,4 +421,10 @@ export const defaults: ParsedOptions = {
   time_24hr: false,
   weekNumbers: false,
   wrap: false,
+  formattingOptions: {
+    timeFormat: "H:i",
+    timeWithSecondsFormat: "H:i:S",
+    dateFormat: "Y-m-d",
+    dateTimeFormat: "Y-m-d\\TH:i:S",
+  },
 };

@@ -2015,6 +2015,27 @@ function FlatpickrInstance(
           : defaultAltFormat + ` h:i${userConfig.enableSeconds ? ":S" : ""} K`;
     }
 
+    if (userConfig.formattingOptions) {
+      // TODO: Maybe throw an error if custom formatDate and/or parseDate was not provided.
+
+      if (!userConfig.formattingOptions.timeFormat) {
+        // TODO: throw exception
+      }
+      if (!userConfig.formattingOptions.timeWithSecondsFormat) {
+        // TODO: throw exception
+      }
+      if (!userConfig.formattingOptions.dateFormat) {
+        // TODO: throw exception
+      }
+      if (!userConfig.formattingOptions.dateTimeFormat) {
+        // TODO: throw exception
+      }
+
+      self.config.formattingOptions = {
+        ...userConfig.formattingOptions,
+      };
+    }
+
     Object.defineProperty(self.config, "minDate", {
       get: () => self.config._minDate,
       set: minMaxDateSetter("min"),
@@ -2028,7 +2049,7 @@ function FlatpickrInstance(
     const minMaxTimeSetter = (type: string) => (val: any) => {
       self.config[type === "min" ? "_minTime" : "_maxTime"] = self.parseDate(
         val,
-        "H:i:S"
+        self.config.formattingOptions.timeWithSecondsFormat
       );
     };
 
@@ -2523,10 +2544,16 @@ function FlatpickrInstance(
       self.latestSelectedDateObj = self.selectedDates[0];
 
     if (self.config.minTime !== undefined)
-      self.config.minTime = self.parseDate(self.config.minTime, "H:i");
+      self.config.minTime = self.parseDate(
+        self.config.minTime,
+        self.config.formattingOptions.timeFormat
+      );
 
     if (self.config.maxTime !== undefined)
-      self.config.maxTime = self.parseDate(self.config.maxTime, "H:i");
+      self.config.maxTime = self.parseDate(
+        self.config.maxTime,
+        self.config.formattingOptions.timeFormat
+      );
 
     self.minDateHasTime =
       !!self.config.minDate &&
@@ -2608,6 +2635,13 @@ function FlatpickrInstance(
         ? "Y-m-d"
         : "H:i:S";
 
+    self.mobileParseFormatStr =
+      inputType === "datetime-local"
+        ? self.config.formattingOptions.dateTimeFormat
+        : inputType === "date"
+        ? self.config.formattingOptions.dateFormat
+        : self.config.formattingOptions.timeWithSecondsFormat;
+
     if (self.selectedDates.length > 0) {
       self.mobileInput.defaultValue = self.mobileInput.value = self.formatDate(
         self.selectedDates[0],
@@ -2639,7 +2673,7 @@ function FlatpickrInstance(
       self.setDate(
         (getEventTarget(e) as HTMLInputElement).value,
         false,
-        self.mobileFormatStr
+        self.mobileParseFormatStr
       );
       triggerEvent("onChange");
       triggerEvent("onClose");

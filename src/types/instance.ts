@@ -10,6 +10,7 @@ export interface Elements {
   _input: HTMLInputElement;
   mobileInput?: HTMLInputElement;
   mobileFormatStr?: string;
+  mobileParseFormatStr?: string;
 
   selectedDateElem?: DayElement;
   todayDateElem?: DayElement;
